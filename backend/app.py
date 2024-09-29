@@ -15,7 +15,7 @@ client = OpenAI(api_key=api_key)
 stock_recommendations = []
 
 last_bird_id = None
-current_bird_status = {}
+current_bird_id=None
 
 
 def generate_stock_recommendations(amount, risk_level, additional_info):
@@ -41,33 +41,31 @@ def generate_stock_recommendations(amount, risk_level, additional_info):
         max_tokens=500,
         temperature=0.7
     )
-    
+
     recommendations = response.choices[0].message.content.strip()
 
     return recommendations.split(", ")
 
 @app.route('/api/notify_bird', methods=['POST'])
 def notify_bird():
-    data = request.json 
-    bird_name = data.get('bird_name')
+    global current_bird_id
+    data = request.json
+    bird_id = data.get('bird_id')
 
-    if not bird_name:
-        return jsonify({"error": "bird_name is required"}), 400
+    if bird_id not in [0, 1, 2]:
+        return jsonify({"error": "bird_id must be 0, 1, or 2"}), 400
 
-    current_bird_status['bird_name'] = bird_name
-    current_bird_status['status'] = "speaking"
+    current_bird_id = bird_id
 
-    return jsonify({"message": f"{bird_name} has started speaking!"}), 200
+    return jsonify({"message": f"Bird {bird_id} has started speaking!"}), 200
+
 
 @app.route('/api/get_bird_status', methods=['GET'])
 def get_bird_status():
-    if 'bird_name' in current_bird_status:
-        return jsonify({
-            "bird_name": current_bird_status['bird_name'],
-            "status": current_bird_status['status']
-        }), 200
+    if current_bird_id is not None:
+        return str(current_bird_id), 200  
     else:
-        return jsonify({"message": "No bird is currently speaking."}), 404
+        return "", 404 
 
 @app.route('/api/recommendations', methods=['POST'])
 def get_recommendations():
@@ -97,7 +95,15 @@ def select_bird():
     bird_id = data.get('bird_id')
     stock_ticker = data.get('stock_ticker', 'GOOGL')  
 
-    if not bird_id or not isinstance(bird_id, int) or bird_id not in [1, 2, 3]:
+    if bird_id is None:
+        return jsonify({"error": "bird_id is required"}), 400
+
+    try:
+        bird_id = int(bird_id)
+    except (ValueError, TypeError):
+        return jsonify({"error": "bird_id must be an integer"}), 400
+
+    if bird_id not in [0, 1, 2]:
         return jsonify({"error": "Invalid bird ID"}), 400
 
     if bird_id != last_bird_id:
