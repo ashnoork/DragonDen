@@ -9,7 +9,6 @@ const GetSerial = () => {
       try {
         const response = await fetch('http://localhost:5000/getAction');
         const data = await response.json();
-        console.log('Serial Data:', data);  // Debugging serial data
         setSerialData(data);
       } catch (error) {
         console.error('Error fetching serial data:', error);
@@ -18,14 +17,13 @@ const GetSerial = () => {
 
     fetchSerialData();
 
-    const interval = setInterval(fetchSerialData, 80);  // Adjust polling to 200ms
+    const interval = setInterval(fetchSerialData, 60);  
 
     return () => clearInterval(interval);
   }, []);
 
   return (
     <div>
-      <h1>Serial Data</h1>
       {serialData ? (
         <LandingPage serialData={serialData} />  
       ) : (
