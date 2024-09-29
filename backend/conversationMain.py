@@ -7,8 +7,8 @@ from openai import OpenAI
 
 pygame.mixer.init()
 
-elevenlabs_api_key = "" #INSERT
-client = OpenAI(api_key="")  
+elevenlabs_api_key = ""
+client = OpenAI(api_key="")  # Create an OpenAI client instance
 
 voice_ids = {
     "sustainability": "TxGEqnHWrfWFTfGW9XjX",
@@ -19,16 +19,16 @@ voice_ids = {
 current_bird = None 
 stop_flag = threading.Event()  
 
-def notify_server_bird_speaking(bird_name):
-    url = "http://127.0.0.1:5000/api/notify_bird" 
+def notify_server_bird_speaking(bird_id):
+    url = "http://127.0.0.1:5000/api/notify_bird"  # Update with your server's actual URL
     data = {
-        "bird_name": bird_name,
+        "bird_id": bird_id,
     }
 
     try:
         response = requests.post(url, json=data)
         if response.status_code == 200:
-            print(f"Server notified: {bird_name} started speaking.")
+            print(f"Server notified: {bird_id} started speaking.")
         else:
             print(f"Failed to notify server: {response.status_code}")
     except requests.exceptions.RequestException as e:
@@ -95,12 +95,20 @@ def text_to_speech_and_play(text, bird_name):
     }
 
     response = requests.post(url, json=data, headers=headers)
-
     if response.status_code == 200:
         audio_data = io.BytesIO(response.content)
         pygame.mixer.music.load(audio_data)
 
-        notify_server_bird_speaking(bird_name)
+        if bird_name == "sustainability":
+            bird_id = 0
+        elif bird_name == "capitalist":
+            bird_id = 1
+        elif bird_name == "female_empowerment":
+            bird_id = 2
+        else:
+            bird_id = -1
+
+        notify_server_bird_speaking(bird_id)
         pygame.mixer.music.play()
 
         while pygame.mixer.music.get_busy():
@@ -142,7 +150,7 @@ def interact_with_birds(stock_ticker):
             bird_name = "female_empowerment"
         elif choice == '4':
             print("Exiting interaction.")
-            # Stop any current speech
+        
             if current_speech_thread is not None and current_speech_thread.is_alive():
                 stop_flag.set()
                 current_speech_thread.join()
@@ -162,9 +170,9 @@ def interact_with_birds(stock_ticker):
 
 def interact_with_bird_by_id(bird_id, stock_ticker):
     bird_mapping = {
-        1: "sustainability",
-        2: "capitalist",
-        3: "female_empowerment"
+        0: "sustainability",
+        1: "capitalist",
+        2: "female_empowerment"
     }
 
     if bird_id not in bird_mapping:
