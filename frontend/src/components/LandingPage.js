@@ -1,16 +1,21 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Characterbox from "./Characterbox";
 import Heart from "../images/tinderheart.png";
 import NoMatch from "../images/no.webp";
 
 const LandingPage = ({ serialData }) => {
+  const navigate = useNavigate()
   const dragon_count = 3;
   const [selectIndex, setSelectIndex] = useState(0);
   const [match, setMatch] = useState(false);
-  const [showImage, setShowImage] = useState(false); // State to control image visibility
-  const [imageType, setImageType] = useState(""); // 'match' or 'noMatch'
+  const [showImage, setShowImage] = useState(false); 
+  const [imageType, setImageType] = useState(""); 
 
-  // Function to handle toggling the index based on serial data
+  const handleFinish=()=>{
+    navigate('/')
+
+  }
   const handleSerialToggle = (data) => {
     if (data[1] === "Right") {
       setSelectIndex((prevIndex) => (prevIndex + 1) % dragon_count);
@@ -45,8 +50,8 @@ const LandingPage = ({ serialData }) => {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden">
-      <div className="absolute right-0 px-12 py-2 bg-white rounded-xl mt-10 mr-12">
-        <button>Finish</button>
+      <div className="absolute right-0 px-12 py-2 rounded-xl mt-10 mr-12 rounded-2xl text-white  text-center border-2 border-white font-bold  ">
+        <button onClick={handleFinish}>Finish</button>
       </div>
       <div className="flex justify-center items-center space-x-4 mt-10">
         {[...Array(dragon_count)].map((_, index) => (
@@ -64,7 +69,7 @@ const LandingPage = ({ serialData }) => {
         </div>
       )}
       <div className="flex">
-        <div className=" absolute bottom-32 ml-16 w-3/5  px-24 py-8 rounded-2xl text-white text-4xl text-center border-2 border-white font-bold">  AAPL</div>
+        <div className=" absolute bottom-32 ml-16 w-3/5  px-24 py-8 rounded-2xl text-white text-4xl text-center border-2 border-white font-bold  shadow-white-glow animate-slow-bounce">  AAPL</div>
         <div className="  absolute bottom-32 right-24 ml-12 w-1/5 bg-white px-24 py-8 rounded-2xl text-[#6D37D9] text-4xl font-bold text-center">  ···</div>
 
       </div>
