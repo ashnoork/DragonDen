@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+// import React, { useState } from 'react';
 import Characterbox from './Characterbox';
 
 const LandingPage = () => {

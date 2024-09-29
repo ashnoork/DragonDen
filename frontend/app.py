@@ -5,9 +5,7 @@ import pandas as pd
 # Sample data
 data = {
     'ticker': ['ZM', 'SPY', 'AA', 'TSLA', 'NVDA', 'AAPL'],
-    'Name': ['Zoom Video', 'SPDR S&P', 'Dow Jones', 'Kosdaq 100', 'US Dollar Japan', 'Ethereum USD'],
-    'Price': [492.60, 330.30, 27288.18, 1775.93, 104.93, 344.19],
-    'Change': [24.13, 3.33, 140.48, -64.56, 0.29, 3.96],
+    'Name': ['Zoom Video', 'SPDR S&P', 'Dow Jones', 'Kosdaq 100', 'US Dollar Japan', 'Ethereum USD']
 }
 
 # Create a DataFrame
@@ -31,6 +29,15 @@ if 'stock_selected' not in st.session_state:
 for index, row in df.iterrows():
     if st.sidebar.button(f"{row['ticker']} - {row['Name']}"):
         st.session_state.stock_selected = row['ticker']  # Store only the ticker
+
+st.markdown(
+    """<style>
+        .element-container:nth-of-type(3) button {
+            height: 3em;
+        }
+        </style>""",
+    unsafe_allow_html=True,
+)
 
 # Get the selected ticker from the session state
 tick = st.session_state.stock_selected
