@@ -1,24 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import Characterbox from './Characterbox';
 
-const LandingPage = () => {
+const LandingPage = ({ serialData }) => {
   const dragon_count = 3;
   const [selectIndex, setSelectIndex] = useState(0);
 
-  const handleKeydown = (event) => {
-    if (event.key === 'ArrowRight') {
+  // Function to handle toggling the index based on serial data
+  const handleSerialToggle = (data) => {
+    if (data[1] === 'Right') {
       setSelectIndex((prevIndex) => (prevIndex + 1) % dragon_count);
-    } else if (event.key === 'ArrowLeft') {
-      setSelectIndex((prevIndex) => (prevIndex - 1 + dragon_count) % dragon_count); 
+    } else if (data[1] === 'Left') {
+      setSelectIndex((prevIndex) => (prevIndex - 1 + dragon_count) % dragon_count);
     }
-  }
+  };
 
   useEffect(() => {
-    window.addEventListener('keydown', handleKeydown);
-    return () => {
-      window.removeEventListener('keydown', handleKeydown);
-    };
-  }, []) 
+    // Every time the serialData changes, check for 'toggle, left' or 'toggle, right'
+    if (serialData) {
+      handleSerialToggle(serialData);
+    }
+  }, [serialData]);  // Re-run this effect when serialData changes
 
   return (
     <div className="flex flex-col h-screen overflow-hidden">
@@ -29,7 +30,6 @@ const LandingPage = () => {
         {[...Array(dragon_count)].map((_, index) => (
           <Characterbox key={index} isSelected={index === selectIndex} />
         ))}
-        {    console.log(selectIndex)        }
       </div>
     </div>
   );
