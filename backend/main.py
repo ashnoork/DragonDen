@@ -2,12 +2,25 @@ import serial
 import flask
 import time
 import threading
+from flask import Flask, jsonify
 
 app = flask.Flask(__name__)
 app.debug = True
 
 ser = serial.Serial(port='/dev/cu.usbmodem101',baudrate=9600)
 state = []
+
+@app.route('/api/stocks', methods=['GET'])
+def get_stocks():
+    # Replace this with the actual data 
+    stocks = [
+        {"symbol": "AAPL", "name": "Apple Inc."},
+        {"symbol": "GOOGL", "name": "Alphabet Inc."},
+        {"symbol": "MSFT", "name": "Microsoft Corporation"},
+        
+    ]
+    return jsonify(stocks)
+
 
 app.route('/getAction')
 def getAction():
