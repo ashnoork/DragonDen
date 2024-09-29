@@ -1,14 +1,15 @@
 import serial
 import flask
+from flask_cors import CORS
 import time
 import threading
 from flask import Flask, jsonify
-from flask_cors import CORS
 
 app = flask.Flask(__name__)
+CORS(app)  # Enable CORS for the entire app
 app.debug = True
 
-ser = serial.Serial(port='/dev/cu.usbmodem101',baudrate=9600)
+ser = serial.Serial(port='/dev/cu.usbmodem101', baudrate=9600)
 state = []
 
 @app.route('/api/stocks', methods=['GET'])
@@ -29,18 +30,17 @@ def getAction():
     res = flask.jsonify(state)
     return res
 
-
 def read_serial():
     global state
     while True:
         value = ser.readline()
-        valueInString = str(value, 'UTF-8')
+        # Handle potential UnicodeDecodeError
+        valueInString = str(value, 'UTF-8', errors='replace')  # Replace invalid characters
         state = valueInString.split('#')
-        state[1]=state[1].strip()
+        state[1] = state[1].strip()
         print(state)
 
 thread = threading.Thread(target=read_serial, daemon=True)
 thread.start()
-
 if __name__ == '__main__':
     app.run()
