@@ -2,6 +2,7 @@ import serial
 import flask
 import time
 import threading
+from flask_cors import CORS
 
 app = flask.Flask(__name__)
 app.debug = True
@@ -12,7 +13,7 @@ state = []
 app.route('/getAction')
 def getAction():
     global state
-    res = flask.jsonify({state})
+    res = flask.jsonify(state)
     return res
 
 
